@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1001,
+    "name": "Galaxy Raiders",
+    "app_id": "com.galaxy.raiders",
+    "enabled": true,
+    "consent_check_enabled": true
+  },
+  {
+    "id": 1002,
+    "name": "Pixel Farm",
+    "app_id": "com.pixel.farm",
+    "enabled": true,
+    "consent_check_enabled": false
+  },
+  {
+    "id": 1003,
+    "name": "Night Racer",
+    "app_id": "com.night.racer",
+    "enabled": true,
+    "consent_check_enabled": null
+  },
+  {
+    "id": 1004,
+    "name": "Old Game",
+    "app_id": "com.old.game",
+    "enabled": false,
+    "consent_check_enabled": true
+  }
+]
