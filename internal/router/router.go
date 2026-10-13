@@ -54,6 +54,13 @@ func (r *Router) Process(ev event.Event) Result {
 		return Result{StatusProjectDisabled, "integration is disabled"}
 	}
 
+	if project.ConsentCheckEnabled == nil || *project.ConsentCheckEnabled {
+		consent, ok := r.store.Consent(ev.ProjectID, ev.UserID)
+		if !ok || !consent.Approved {
+			return Result{StatusGDPRNotApproved, "user consent is not approved"}
+		}
+	}
+
 	eventName := "purchase"
 	if ev.Type == event.TypeRefund {
 		eventName = "refund"
@@ -70,6 +77,7 @@ func (r *Router) Process(ev event.Event) Result {
 		EventName: eventName,
 		Amount:    ev.Data.Amount,
 		Currency:  ev.Data.Currency,
+		Sandbox:   ev.DryRun == 1,
 	})
 	switch {
 	case err == nil:
