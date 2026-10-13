@@ -83,7 +83,7 @@ func TestProcess_Payload(t *testing.T) {
 	if len(sent) != 1 {
 		t.Fatalf("sent %d payloads, want 1", len(sent))
 	}
-	if p := sent[0]; p.EventName != "purchase" || p.Amount != 9.99 || p.MMPID != "mmp-alice" {
+	if p := sent[0]; p.EventName != "purchase" || p.Amount != 9.99 || p.MMPID != "mmp-alice" || p.Sandbox {
 		t.Fatalf("payload = %+v", p)
 	}
 }
