@@ -20,6 +20,7 @@ const (
 	StatusProjectDisabled  Status = "PROJECT_DISABLED"  // интеграция проекта выключена, финально
 	StatusRetry            Status = "RETRY"             // повторить позже
 	StatusFailed           Status = "FAILED"            // неустранимая ошибка отправки
+	StatusGDPRNotApproved  Status = "GDPR_NOT_APPROVED" // согласие не получено, финально
 )
 
 // Result — результат обработки события.
@@ -53,6 +54,11 @@ func (r *Router) Process(ev event.Event) Result {
 		return Result{StatusProjectDisabled, "integration is disabled"}
 	}
 
+	eventName := "purchase"
+	if ev.Type == event.TypeRefund {
+		eventName = "refund"
+	}
+
 	mmpID, ok := r.store.MMPID(project.AppID, ev.UserID)
 	if !ok {
 		return Result{StatusNoMapping, "no mmp id for user"}
@@ -61,7 +67,7 @@ func (r *Router) Process(ev event.Event) Result {
 	err := r.sender.Send(sender.Payload{
 		EventID:   ev.ID,
 		MMPID:     mmpID,
-		EventName: "purchase",
+		EventName: eventName,
 		Amount:    ev.Data.Amount,
 		Currency:  ev.Data.Currency,
 	})
@@ -83,7 +89,7 @@ func validate(ev event.Event) error {
 		return errors.New("empty user id")
 	case ev.ProjectID <= 0:
 		return errors.New("empty project id")
-	case ev.Type != event.TypePayment:
+	case ev.Type != event.TypePayment && ev.Type != event.TypeRefund:
 		return fmt.Errorf("unsupported event type %q", ev.Type)
 	case ev.Data.Amount <= 0:
 		return fmt.Errorf("amount must be positive, got %v", ev.Data.Amount)
