@@ -62,8 +62,10 @@ func (r *Router) Process(ev event.Event) Result {
 	}
 
 	eventName := "purchase"
+	amount := ev.Data.Amount
 	if ev.Type == event.TypeRefund {
 		eventName = "refund"
+		amount = -amount
 	}
 
 	mmpID, ok := r.store.MMPID(project.AppID, ev.UserID)
@@ -75,7 +77,7 @@ func (r *Router) Process(ev event.Event) Result {
 		EventID:   ev.ID,
 		MMPID:     mmpID,
 		EventName: eventName,
-		Amount:    ev.Data.Amount,
+		Amount:    amount,
 		Currency:  ev.Data.Currency,
 		Sandbox:   ev.DryRun == 1,
 	})

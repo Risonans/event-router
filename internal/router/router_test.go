@@ -170,7 +170,7 @@ func TestProcess_RefundPayload(t *testing.T) {
 	if len(sent) != 1 {
 		t.Fatalf("sent %d payloads, want 1", len(sent))
 	}
-	if p := sent[0]; p.EventName != "refund" || p.Amount != 9.99 || p.MMPID != "mmp-alice" {
+	if p := sent[0]; p.EventName != "refund" || p.Amount != -9.99 || p.MMPID != "mmp-alice" {
 		t.Fatalf("payload = %+v", p)
 	}
 }
