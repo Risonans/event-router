@@ -56,7 +56,10 @@ func (r *Router) Process(ev event.Event) Result {
 
 	if project.ConsentCheckEnabled == nil || *project.ConsentCheckEnabled {
 		consent, ok := r.store.Consent(ev.ProjectID, ev.UserID)
-		if !ok || !consent.Approved {
+		if !ok {
+			return Result{StatusRetry, "user consent is pending"}
+		}
+		if !consent.Approved {
 			return Result{StatusGDPRNotApproved, "user consent is not approved"}
 		}
 	}

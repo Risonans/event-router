@@ -199,22 +199,22 @@ func TestProcess_GDPR(t *testing.T) {
 			wantSent: 0,
 		},
 		{
-			name: "missing consent",
+			name: "missing consent is retryable",
 			project: store.Project{
 				ID: 1, AppID: "app.one", Enabled: true, ConsentCheckEnabled: boolPtr(true),
 			},
 			mappings: []store.Mapping{
 				{AppID: "app.one", UserID: "alice", MMPID: "mmp-alice"},
 			},
-			want:     StatusGDPRNotApproved,
+			want:     StatusRetry,
 			wantSent: 0,
 		},
 		{
-			name: "consent check runs before mapping lookup",
+			name: "missing consent is retryable before mapping lookup",
 			project: store.Project{
 				ID: 1, AppID: "app.one", Enabled: true, ConsentCheckEnabled: boolPtr(true),
 			},
-			want:     StatusGDPRNotApproved,
+			want:     StatusRetry,
 			wantSent: 0,
 		},
 		{
@@ -232,14 +232,14 @@ func TestProcess_GDPR(t *testing.T) {
 			wantSent: 1,
 		},
 		{
-			name: "nil defaults to deny",
+			name: "nil with missing consent is retryable",
 			project: store.Project{
 				ID: 1, AppID: "app.one", Enabled: true,
 			},
 			mappings: []store.Mapping{
 				{AppID: "app.one", UserID: "alice", MMPID: "mmp-alice"},
 			},
-			want:     StatusGDPRNotApproved,
+			want:     StatusRetry,
 			wantSent: 0,
 		},
 		{
